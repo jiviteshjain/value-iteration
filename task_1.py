@@ -2,6 +2,7 @@ import numpy as np
 from copy import deepcopy
 from functools import reduce
 from operator import add
+import os
 
 HEALTH_RANGE = 5
 ARROWS_RANGE = 4
@@ -45,7 +46,6 @@ class State:
 
     def __str__(self):
         return f'({self.health},{self.arrows},{self.stamina})'
-
 
 def action(action_type, state, costs):
     # returns cost, array of tuple of (probability, state)
@@ -102,27 +102,27 @@ def action(action_type, state, costs):
 
         return cost, choices
 
-def show(i, utilities, policies):
-    print('iteration={}'.format(i))
-    utilities = np.around(utilities, 3)
-    for state, util in np.ndenumerate(utilities):
-        state = State(*state)
-        if state.health == 0:
-            print('{}:-1=[{:.3f}]'.format(state, util))
-            continue
+def show(i, utilities, policies, path):
+    with open(path, 'a+') as f:
+        f.write('iteration={}\n'.format(i))
+        utilities = np.around(utilities, 3)
+        for state, util in np.ndenumerate(utilities):
+            state = State(*state)
+            if state.health == 0:
+                f.write('{}:-1=[{:.3f}]\n'.format(state, util))
+                continue
 
-        if policies[state.show()] == ACTION_SHOOT:
-            act_str = 'SHOOT'
-        elif policies[state.show()] == ACTION_DODGE:
-            act_str = 'DODGE'
-        elif policies[state.show()] == ACTION_RECHARGE:
-            act_str = 'RECHARGE'
+            if policies[state.show()] == ACTION_SHOOT:
+                act_str = 'SHOOT'
+            elif policies[state.show()] == ACTION_DODGE:
+                act_str = 'DODGE'
+            elif policies[state.show()] == ACTION_RECHARGE:
+                act_str = 'RECHARGE'
 
-        print('{}:{}=[{:.3f}]'.format(state, act_str, util))
-    print('\n')
+            f.write('{}:{}=[{:.3f}]\n'.format(state, act_str, util))
+        f.write('\n\n')
 
-
-def value_iteration(delta_inp, gamma_inp, costs_inp):
+def value_iteration(delta_inp, gamma_inp, costs_inp, path):
     utilities = np.zeros((HEALTH_RANGE, ARROWS_RANGE, STAMINA_RANGE))
     policies = np.full((HEALTH_RANGE, ARROWS_RANGE,
                         STAMINA_RANGE), -1, dtype='int')
@@ -175,27 +175,34 @@ def value_iteration(delta_inp, gamma_inp, costs_inp):
 
             policies[state] = best_action
 
-        show(index, utilities, policies)
+        show(index, utilities, policies, path)
         index += 1
         if delta < delta_inp:
             done = True
     return index
 
+# PREP
+os.makedirs('outputs', exist_ok=True)
 
-value_iteration(DELTA, GAMMA, (COST,COST,COST))
+# TASK 1
+path = 'outputs/task_1_trace.txt'
+value_iteration(DELTA, GAMMA, (COST,COST,COST), path)
 
-# Task 2 part 1 
+# TASK 2 PART 1
+path = 'outputs/tast_2_part_1_trace.txt' 
 COST = -2.5
 SHOOT_COST = -0.25
-value_iteration(DELTA, GAMMA, (SHOOT_COST, COST, COST))
+value_iteration(DELTA, GAMMA, (SHOOT_COST, COST, COST), path)
 
-# Task 2 part 2
+# TASK 2 PART 2
 COST = -2.5
 GAMMA = 0.1
-value_iteration(DELTA, GAMMA, (COST, COST, COST))
+path = 'outputs/tast_2_part_2_trace.txt'
+value_iteration(DELTA, GAMMA, (COST, COST, COST), path)
 
 # Task 2 part 3
 COST = -2.5
 GAMMA = 0.1
 DELTA = 1e-10
-value_iteration(DELTA, GAMMA, (COST,COST,COST))
+path = 'outputs/tast_2_part_3_trace.txt'
+value_iteration(DELTA, GAMMA, (COST,COST,COST), path)
