@@ -189,7 +189,7 @@ path = 'outputs/task_1_trace.txt'
 value_iteration(DELTA, GAMMA, (COST,COST,COST), path)
 
 # TASK 2 PART 1
-path = 'outputs/tast_2_part_1_trace.txt' 
+path = 'outputs/task_2_part_1_trace.txt' 
 COST = -2.5
 SHOOT_COST = -0.25
 value_iteration(DELTA, GAMMA, (SHOOT_COST, COST, COST), path)
@@ -197,12 +197,12 @@ value_iteration(DELTA, GAMMA, (SHOOT_COST, COST, COST), path)
 # TASK 2 PART 2
 COST = -2.5
 GAMMA = 0.1
-path = 'outputs/tast_2_part_2_trace.txt'
+path = 'outputs/task_2_part_2_trace.txt'
 value_iteration(DELTA, GAMMA, (COST, COST, COST), path)
 
 # Task 2 part 3
 COST = -2.5
 GAMMA = 0.1
 DELTA = 1e-10
-path = 'outputs/tast_2_part_3_trace.txt'
+path = 'outputs/task_2_part_3_trace.txt'
 value_iteration(DELTA, GAMMA, (COST,COST,COST), path)
